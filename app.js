@@ -27,9 +27,9 @@ app.post( '/dishes', verify.admin, crud.product.createDish );
 app.put( '/dishes/:id', verify.admin, crud.product.updateDish );
 app.delete( '/dishes/:id', verify.admin, crud.product.deleteDish );
 
-app.post('/user/register', crud.user.createUser );
-app.post('/user/login', crud.user.loginUser );
-// app.post('/user/login', crud.user.loginUser );
+app.post( '/user/register', crud.user.createUser );
+app.post( '/user/login', crud.user.loginUser );
+app.post( '/user/order', crud.user.createOrder );
 
 // //5. levantar el servidor
 app.listen(PORT, () => {

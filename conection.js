@@ -16,6 +16,7 @@ async function init() {
 
     const connection = await mysql.createConnection(data);
     console.log('Conected to MySQL server');
+    await connection.query(`DROP DATABASE IF EXISTS ${db};`);
     await connection.query(`CREATE DATABASE IF NOT EXISTS ${db};`);
     console.log(`Database created (${db})`);
 
@@ -24,13 +25,11 @@ async function init() {
         .then( console.log( `Conected to database (${db})`) )
         .catch( err => console.error('Error de conexion:', err) );
 
-    await sequelize.query(tables.product.deleteTable);
     await sequelize.query(tables.product.createTable);
-    console.log('Table product created');
-
-    await sequelize.query(tables.user.deleteTable);
     await sequelize.query(tables.user.createTable);
-    console.log('Table user created');
+    await sequelize.query(tables.order.createTable);
+    await sequelize.query(tables.item.createTable);
+    console.log('Tables created');
 
     await sequelize.query(tables.user.setValues);
     await sequelize.query(tables.product.setValues);

@@ -1,6 +1,8 @@
-const init = require("./conection");
 const md5 = require('md5');
+const moment = require('moment');
 const token = require('./token');
+const init = require('./conection');
+const { QueryTypes } = require('sequelize');
 
 let sequelize; 
 init().then( s => sequelize = s);
@@ -125,6 +127,62 @@ const user = {
             }
         })
         .catch( err => res.status(404).send("Error: " + err));
+    },
+    createOrder : async ( req, res ) => {
+
+        const { items, delAddress } = req.body;
+        const { id, username } = token.decode(req.headers);
+
+        let total = 0, itemsPrices = [];
+
+        for (const idItem of items) {
+        
+            const data = await sequelize.query( 
+            `SELECT price 
+                FROM product
+                WHERE id = :_id`, {
+                type: sequelize.QueryTypes.SELECT,
+                replacements : {
+                _id : idItem,
+                }
+            });
+            total += data[0].price;
+            itemsPrices.push(data[0].price);
+        };
+        
+        const date = moment(new Date()).format('YYYY-MM-DD hh:mm:ss');
+
+        await sequelize.query(
+            `INSERT INTO delilah_cmnl.order ( user_id, date, total, delivery_address ) 
+            VALUES ( :_user_id, :_date, :_total, :_delivery_address )`, {
+                replacements: {
+                    _user_id : id, 
+                    _date : date, 
+                    _total : total,
+                    _delivery_address : delAddress, 
+                }
+            }
+        );
+
+        const idOrder = await sequelize.query(
+            `SELECT id FROM delilah_cmnl.order ORDER BY id DESC LIMIT 1`,
+            {type: sequelize.QueryTypes.SELECT}
+        );
+        
+        for (const [ index, idItem ] of items.entries()) {
+            
+            await sequelize.query(
+                `INSERT INTO delilah_cmnl.item ( order_id, product_id, price ) 
+                VALUES ( :_order_id, :_product_id, :_price )`, {
+                    replacements: {
+                        _order_id : idOrder[0].id, 
+                        _product_id : idItem, 
+                        _price : itemsPrices[index]
+                    }
+                }
+            );
+        };
+        res.status(201).send('Su pedido ha sido generado con éxito! :D');
     }
 }
 const crud = { product , user } 

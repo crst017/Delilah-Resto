@@ -11,8 +11,8 @@ const product = {
     deleteTable :
     `DROP TABLE IF EXISTS product;`,
     setValues :
-    `INSERT INTO product (name,price)
-        VALUES ("Pizza",5000),("Lasagna",7000),("Hot dog",8000)`, 
+    `INSERT INTO delilah_cmnl.product (name,price)
+        VALUES ("Pizza",5000),("Lasagna",7000),("Hot dog",8000),("Soda",3000),("Burger",8000),("Cheese Burger",10000),("Water",3000)`, 
 }
 
 const user = {
@@ -39,8 +39,35 @@ const user = {
 }
 
 const order = {
-
+    createTable : 
+    `CREATE TABLE IF NOT EXISTS delilah_cmnl.order (
+        id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        user_id INT UNSIGNED NOT NULL,
+        date DATETIME NOT NULL,
+        total INT UNSIGNED NOT NULL,
+        delivery_address VARCHAR(80) NOT NULL,
+        status VARCHAR(1) NULL DEFAULT 'N',
+        PRIMARY KEY (id),
+        FOREIGN KEY (user_id)
+        REFERENCES user (id)
+    )`,
+    deleteTable :
+    `DROP TABLE IF EXISTS item;`
 }
 
-tables = { product , user , order }
+const item = {
+    createTable :
+    `CREATE TABLE IF NOT EXISTS item (
+        id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        order_id INT UNSIGNED NOT NULL,
+        product_id INT UNSIGNED NOT NULL,
+        price INT UNSIGNED NOT NULL,
+        PRIMARY KEY (id),
+        FOREIGN KEY (order_id) REFERENCES delilah_cmnl.order (id),
+        FOREIGN KEY (product_id) REFERENCES product (id)
+    )`,
+    deleteTable :
+    `DROP TABLE IF EXISTS item;`
+}
+tables = { product, user, order, item }
 module.exports = tables;

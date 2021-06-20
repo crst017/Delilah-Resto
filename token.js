@@ -12,10 +12,14 @@ const token = {
 
         return token
     },
-    decode : (token) => {
-        const userInfo = jwt.verify( token, jwtKey);
-        return userInfo
-    }
+    decode : ( headers ) => {
+
+        const auth = headers.authorization;
+        if ( !auth.startsWith("Bearer ") ) return;
+        const token = auth.substring( 7, auth.length );
+        const userInfo = jwt.verify( token, jwtKey );
+        return userInfo 
+    },
 }
 
 module.exports = token;
