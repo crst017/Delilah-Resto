@@ -46,13 +46,16 @@ const order = {
         date DATETIME NOT NULL,
         total INT UNSIGNED NOT NULL,
         delivery_address VARCHAR(80) NOT NULL,
-        status VARCHAR(1) NULL DEFAULT 'N',
+        status VARCHAR(15) NULL DEFAULT 'new',
         PRIMARY KEY (id),
         FOREIGN KEY (user_id)
         REFERENCES user (id)
     )`,
-    deleteTable :
-    `DROP TABLE IF EXISTS item;`
+    setValues :
+    `INSERT INTO delilah_cmnl.order ( user_id, date, total, delivery_address ) 
+        VALUES 
+        ( 2, "2021-06-26 05:08:46", 21000, "Terrace 745 delivery" ),
+        ( 1, "2021-06-26 05:11:26", 30000, "Terrace 748 delivery" )`
 }
 
 const item = {
@@ -66,8 +69,11 @@ const item = {
         FOREIGN KEY (order_id) REFERENCES delilah_cmnl.order (id),
         FOREIGN KEY (product_id) REFERENCES product (id)
     )`,
-    deleteTable :
-    `DROP TABLE IF EXISTS item;`
+    setValues :
+    `INSERT INTO delilah_cmnl.item ( order_id, product_id, price ) 
+        VALUES 
+        ( 1, 1, 5000 ), ( 1, 3, 8000 ), ( 1, 5, 8000 ),
+        ( 2, 1, 5000 ), ( 2, 2, 7000 ), ( 2, 5, 8000 ), ( 2, 2, 7000 ), ( 2, 4, 3000 )`
 }
 tables = { product, user, order, item }
 module.exports = tables;

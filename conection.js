@@ -33,6 +33,8 @@ async function init() {
 
     await sequelize.query(tables.user.setValues);
     await sequelize.query(tables.product.setValues);
+    await sequelize.query(tables.order.setValues);
+    await sequelize.query(tables.item.setValues);
     console.log('Records created');
 
     return sequelize

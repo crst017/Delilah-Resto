@@ -29,7 +29,16 @@ app.delete( '/dishes/:id', verify.admin, crud.product.deleteDish );
 
 app.post( '/user/register', crud.user.createUser );
 app.post( '/user/login', crud.user.loginUser );
-app.post( '/user/order', crud.user.createOrder );
+app.get( '/user', crud.user.getLoggedUser );
+app.get( '/user/:id', verify.admin, crud.user.getUser );
+app.get( '/users', verify.admin, crud.user.getAllUsers );
+
+app.post( '/order', crud.order.createOrder );
+app.get( '/order', crud.order.getLoggedUserOrders );
+app.get( '/orders', verify.admin, crud.order.getOrders );
+app.put( '/order/:id', verify.admin, crud.order.updateOrderStatus )
+
+
 
 // //5. levantar el servidor
 app.listen(PORT, () => {
