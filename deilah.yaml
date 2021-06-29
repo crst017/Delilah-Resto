@@ -1,0 +1,522 @@
+openapi: 3.0.0
+servers:
+  - url: 'localhost:3000'
+info:
+  version: 1.0.0
+  title: Delilah Restó
+  description: Acamica Sprint III Project
+  contact:
+    name: Cristian Navarro
+    url: https://github.com/crst017/Delilah-Resto
+    email: cristiannl.0117@gmail.com
+paths:
+  /dishes:
+    get:
+      summary: Get all dishes
+      tags:
+      - Dishes
+      responses:
+        '200':
+          description: 'Successful operation'
+          content: 
+            application/json:
+             schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/FullDish'
+              example:
+              - id: 1
+                name: "Pizza"
+                price: 5000
+                available: "Y"
+              - id: 2
+                name: "Lasagna"
+                price: 7000
+                available: "Y"
+        '401':
+          $ref: '#/components/responses/401NotAuthorized'
+        '403':
+          $ref: '#/components/responses/403MissingToken'
+    post:
+      summary: Create a new dish
+      tags:
+      - Dishes
+      responses:
+        '201':
+          description: New dish added!
+        '401':
+          $ref: '#/components/responses/401NotAuthorized'
+        '403':
+          $ref: '#/components/responses/403MissingToken'  
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dish'
+            example:
+                dish_name: Postrecito
+                price: 4500
+  /dishes/{id}:
+    get:
+      summary: Get dish by id
+      tags:
+      - Dishes
+      operationId: Getdishbyid
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: 'List of dishes'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FullDish'
+              example:
+                id: 1
+                name: "Pizza"
+                price: 5000
+                available: "Y"
+        '401':
+          $ref: '#/components/responses/401NotAuthorized'
+        '403':
+          $ref: '#/components/responses/403MissingToken'
+        '404':
+          description: The dish id does not exist
+    put:
+      summary: Update dish by id
+      tags:
+      - Dishes
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Dish has been successfully modified!
+        '401':
+          $ref: '#/components/responses/401NotAuthorized'
+        '403':
+          $ref: '#/components/responses/403MissingToken'
+        '404':
+          description: The dish could not be updated - Introduce changes or an existing id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dish'
+            example:
+              dish_name: Papitas Grandes
+              price: 10000
+              available: 'N'
+    delete:
+      summary: Delete dish by id - Soft delete
+      tags:
+      - Dishes
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Dish deleted successfully ! - Soft delete
+        '401':
+          $ref: '#/components/responses/401NotAuthorized'
+        '403':
+          $ref: '#/components/responses/403MissingToken'
+        '404':
+          description: The dish id does not exist
+  /user:
+    get:
+      summary: Get logged user info
+      description: Just returns the logged user information
+      tags:
+      - Users
+      responses:
+        '200':
+          description: OK 
+          content: 
+            application/json:
+             schema:
+               $ref: '#/components/schemas/UserInfo' 
+        '403':
+          $ref: '#/components/responses/403MissingToken'
+  /user/{id}:
+    get:
+      summary: Get user by id
+      description: Returns any user information
+      tags:
+      - Users
+      operationId: Getuserbyid
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: number
+      responses:
+        '200':
+          description: OK 
+          content: 
+            application/json:
+             schema:
+               $ref: '#/components/schemas/UserInfo'
+        '401':
+          $ref: '#/components/responses/401NotAuthorized'
+        '403':
+          $ref: '#/components/responses/403MissingToken'
+        '404':
+          description: The user id does not exist
+  /user/register:
+    post:
+      summary: Create a new user
+      tags:
+      - Users
+      responses:
+        '201':
+          description: New user created!
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+      security: []
+  /user/login:
+    post:
+      summary: Login
+      tags:
+      - Users
+      responses:
+        '200':
+          description: 'OK'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      security: []
+  /users:
+    get:
+      summary: Get all users
+      tags:
+      - Users
+      responses:
+        '200':
+          description: OK 
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersArray'
+        '401':
+          $ref: '#/components/responses/401NotAuthorized'
+        '403':
+          $ref: '#/components/responses/403MissingToken'      
+  /order:
+    get:
+      summary: Get logged user orders
+      description: Just returns the logged user information
+      tags:
+      - Orders
+      responses:
+        '200':
+          description: OK 
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultiOrder'
+        '403':
+          $ref: '#/components/responses/403MissingToken'
+    post:
+      summary: Create a new order
+      tags:
+      - Orders
+      responses:
+        '200':
+          description: A new order has been successfully generated! :D 
+        '401':
+          $ref: '#/components/responses/401NotAuthorized'
+        '403':
+          $ref: '#/components/responses/403MissingToken'
+      requestBody:
+        required: true
+        content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewOrder'
+  /order/{id}:
+    put:
+      summary: Update order status by id
+      tags:
+      - Orders
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: 'New order status'
+        '401':
+          $ref: '#/components/responses/401NotAuthorized'
+        '403':
+          $ref: '#/components/responses/403MissingToken'
+        '404':
+          description: Wrong order id or indicated status is already set. Please verify
+      requestBody:
+        required: true
+        description: "Use any of the following values: \n new, confirmed, preparing, sending, cancelled or delivered" 
+        content:
+          application/json:
+            schema:
+              type: object
+              description: "Use any of the following values: new, confirmed, preparing, sending, cancelled or delivered" 
+              properties:
+                status:
+                  type: string
+                  example: confirmed
+              required:
+                - status
+  /orders:
+    get:
+      summary: Get all orders
+      tags:
+      - Orders
+      responses:
+        '200':
+          description: OK 
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultiOrder'
+        '401':
+          $ref: '#/components/responses/401NotAuthorized'
+        '403':
+          $ref: '#/components/responses/403MissingToken'
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+  schemas: 
+    Dish: 
+      type: object
+      properties: 
+        dish_name: 
+          type: string
+          maxLength: 50
+        price:  
+          type: integer
+        available: 
+          type: string
+          maxLength: 1
+          description: Set (Y) yes or (N) no
+          default: Y
+      required:
+        - dish_name
+        - price
+    GetOrderDish:
+      properties:
+        name:
+          type: string
+          example:
+            "Soda"
+        price:
+          type: integer
+          example:
+            3000
+    FullDish:
+      properties: 
+        id:
+          type: integer
+        dish_name: 
+          type: string
+        price:  
+          type: integer
+        available: 
+          type: string
+      example: 
+        id: 1
+        name: Pizza
+        price: 5000
+        available: "Y"
+    UserInfo:
+      type: object
+      properties: 
+        username:
+          type: string
+        fullname: 
+          type: string
+        email:  
+          type: string
+        telephone: 
+          type: string
+        address: 
+          type: string  
+      example: 
+        username: "user"
+        fullname: "seed user"
+        email: "user@example.com"
+        telephone: "2020201"
+        address: "743 evergreen terrace"
+    UserRegister:
+      properties: 
+        username:
+          type: string
+        fullname: 
+          type: string
+        email:  
+          type: string
+        telephone: 
+          type: string
+        address: 
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - fullname
+        - email
+        - telephone
+        - address
+        - password
+      example: 
+        username: "user"
+        fullname: "seed user"
+        email: "user@example.com"
+        telephone: "2020201"
+        address: "743 evergreen terrace"
+        password: "cris"
+    UserLogin:
+      properties: 
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+      example: 
+        username: "user"
+        password: "cris"
+    UsersArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/UserInfo' 
+      example:
+        - username: "admin"
+          fullname: "seed admin"
+          email: "admin@example.com"
+          telephone: "2020200"
+          address: "742 evergreen terrace"
+          role: "admin"
+        - username: "user"
+          fullname: "seed user"
+          email: "user@example.com"
+          telephone: "2020201"
+          address: "743 evergreen terrace"
+          role: "user"
+    SimpleOrder:
+      properties:
+        orderID: 
+          type: integer
+          example: 1
+        name: 
+          type: string
+          example: "seed admin"
+        delAddress: 
+          type: string
+          example: "Terrace 748 delivery"
+        telephone: 
+          type: string
+          example: "2020200"
+        total: 
+          type: integer
+          example: 30000
+        status: 
+          type: string
+          example: "new"
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetOrderDish'
+          example:
+            - name: "Soda"
+              price: 3000
+            - name: "Pizza"
+              price: 5000
+    MultiOrder:
+      type: array
+      items: 
+        $ref: '#/components/schemas/SimpleOrder'
+      example: 
+        - orderID: 1
+          name: "seed user"
+          delAddress: "Terrace 745 delivery"
+          telephone: "2020201"
+          total: 21000
+          status: "new"
+          items: [
+              {
+                  "name": "Pizza",
+                  "price": 5000
+              },
+              {
+                  "name": "Hot dog",
+                  "price": 8000
+              },
+              {
+                  "name": "Burger",
+                  "price": 8000
+              }
+          ]
+        - orderID: 2
+          name: "seed admin"
+          delAddress: "Terrace 748 delivery"
+          telephone: "2020200"
+          total: 30000
+          status: "new"
+          items: [
+            {
+                "name": "Soda",
+                "price": 3000
+            },
+            {
+                "name": "Pizza",
+                "price": 5000
+            }
+          ]
+    NewOrder:
+      type: object
+      properties:
+        delAddress:
+          type: string
+          example: "Terrace 745 delivery address"
+        items:
+          description: An array with the selected dishes IDs
+          type: integer
+          example: 
+            - 1
+            - 3
+            - 5
+      required:
+        - delAddress
+        - items
+  responses:
+    401NotAuthorized:
+      description: Not authorized access
+    403MissingToken:
+      description: Authorization token not found
+security:
+  - bearer: []
+tags:
+  - name: Dishes
+    description: Dish management
+  - name: Users
+    description: Users management
+  - name: Orders
+    description: Orders management

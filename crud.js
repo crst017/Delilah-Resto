@@ -19,7 +19,10 @@ const product =  {
             replacements: { _id : id },  
             type: sequelize.QueryTypes.SELECT
         })
-            .then( data => res.status(200).json(data))
+            .then( data => {
+                if (data.length === 0) res.status(404).send('The dish id does not exist');
+                else res.status(200).json(data)
+            })
             .catch( err => res.status(404).send("Error: " + err));
     },
     createDish : ( req , res ) => {
@@ -52,18 +55,31 @@ const product =  {
                     _available : available 
                 }
             })
-            .then( data => res.status(200).send("Dish has been modified!"))
+            .then( data => {
+                if (data[0].affectedRows === 0) res.status(404).send('The dish could not be updated - Introduce changes or an existing id');
+                else res.status(201).send('Dish has been successfully modified!');
+            })
             .catch( err => res.status(400).send("Error: " + err));
     },
-    deleteDish :( req , res ) => {
+    deleteDish : async ( req , res ) => {
 
         const id = req.params.id;
-        sequelize.query(
-            `DELETE FROM product 
+        
+        const status = await sequelize.query(
+            `SELECT available FROM product 
             WHERE id = :_id`, { 
                 replacements: { _id : id },
+                type: sequelize.QueryTypes.SELECT
             })
-            .then( data => res.status(200).send("Dish deleted successfully :( !"))
+
+        if (status.length === 0) res.status(404).send('The dish id does not exist');
+           
+        sequelize.query(
+            `UPDATE product SET available = 'N'
+                WHERE id = :_id`, { 
+                replacements: { _id : id },
+            })
+            .then( data => res.status(200).send("Dish deleted successfully! (Soft delete)"))
             .catch( err => res.status(404).send("Error: " + err));
     }
 }
@@ -147,7 +163,9 @@ const user = {
                 _id : id
             }
         });
-        res.status(200).json(userInfo[0]);
+
+        if (userInfo.length === 0) res.status(404).send('The user id does not exist');
+        else res.status(200).json(userInfo[0]);
     },
     getAllUsers : async (req, res) => {
 
@@ -283,7 +301,7 @@ const order = {
         const { status } = req.body;
 
         if ( status != "new" && status != "confirmed" && status != "preparing" && status != "sending" && status != "cancelled" && status != "delivered") {
-            return res.status(400).send(`The status indicated for the order does not exist`);
+            return res.status(404).send(`The status indicated for the order is not allowed`);
         }
 
         sequelize.query(
@@ -294,10 +312,14 @@ const order = {
                     _status : status
                 }
             })
-            .then( data => res.status(200).send(`The order is now "${status}"`))
+            .then( data => {
+                if (data[0].affectedRows === 0) res.status(404).send('Wrong order id or indicated status is already set. Please verify');
+                else res.status(201).send(`The order is now "${status}"`);
+            })
             .catch( err => res.status(400).send("Error: " + err));
     }
 }
+// `The order is now "${status}"`
 const crud = { product , user , order} 
 
 module.exports = crud;

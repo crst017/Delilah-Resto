@@ -7,10 +7,10 @@ const verify = {
         const userInfo = token.decode(headers);
         
         if (userInfo.role === "admin") next()
-        else res.status(403).send("Acceso no autorizado")
+        else res.status(403).send("Not authorized access")
     },
     token : (err, req, res, next) => {
-        if (err.name === 'UnauthorizedError') res.status(404).send('No se encontró un token valido');
+        if (err.name === 'UnauthorizedError') res.status(401).send('Auth token not found');
         console.log("Estoy pasando")
     }
 }
