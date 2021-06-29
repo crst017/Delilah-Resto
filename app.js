@@ -19,24 +19,23 @@ app.use( verify.token ); //Handle the expressJwt error
 
 //3.1 definir constantes
 const PORT = process.env.APP_PORT ? process.env.APP_PORT : 3000;
-
 // 4. escribir rutas o endpoints
 app.get ( '/dishes', crud.product.getDishes );
-app.get( '/dishes/:id', crud.product.getDish );
 app.post( '/dishes', verify.admin, crud.product.createDish );
+app.get( '/dishes/:id', crud.product.getDish );
 app.put( '/dishes/:id', verify.admin, crud.product.updateDish );
 app.delete( '/dishes/:id', verify.admin, crud.product.deleteDish );
 
-app.post( '/user/register', crud.user.createUser );
-app.post( '/user/login', crud.user.loginUser );
 app.get( '/user', crud.user.getLoggedUser );
 app.get( '/user/:id', verify.admin, crud.user.getUser );
+app.post( '/user/register', crud.user.createUser );
+app.post( '/user/login', crud.user.loginUser );
 app.get( '/users', verify.admin, crud.user.getAllUsers );
 
-app.post( '/order', crud.order.createOrder );
 app.get( '/order', crud.order.getLoggedUserOrders );
-app.get( '/orders', verify.admin, crud.order.getOrders );
+app.post( '/order', crud.order.createOrder );
 app.put( '/order/:id', verify.admin, crud.order.updateOrderStatus )
+app.get( '/orders', verify.admin, crud.order.getOrders );
 
 
 
