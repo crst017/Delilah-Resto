@@ -8,3 +8,8 @@ Una vez se descarga el proyecto:
 4. Guardar los cambios del archivo
 5. Abrir la terminal y ejecutar el comando "npm i" para instalar las dependencias
 6. Ejecutar el comando "nodemon app" o en su defecto "node app"
+
+Usuario administrador:
+    -admin
+Password:
+    -admin
