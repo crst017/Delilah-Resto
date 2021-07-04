@@ -10,6 +10,6 @@ Una vez se descarga el proyecto:
 6. Ejecutar el comando "nodemon app" o en su defecto "node app"
 
 Usuario administrador:
-    -admin
+    admin
 Password:
-    -admin
+    admin
