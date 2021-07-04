@@ -317,9 +317,29 @@ const order = {
                 else res.status(201).send(`The order is now "${status}"`);
             })
             .catch( err => res.status(400).send("Error: " + err));
+    },
+    deleteOrder : async ( req , res ) => {
+
+        const id = req.params.id;
+        
+        const status = await sequelize.query(
+            `SELECT status FROM delilah_cmnl.order
+            WHERE id = :_id`, { 
+                replacements: { _id : id },
+                type: sequelize.QueryTypes.SELECT
+            })
+
+        if (status.length === 0) res.status(404).send('The order id does not exist');
+
+        sequelize.query(
+            `UPDATE delilah_cmnl.order SET status = 'cancelled'
+                WHERE id = :_id`, { 
+                replacements: { _id : id },
+            })
+            .then( data => res.status(200).send("The order has been cancelled! (Soft delete)"))
+            .catch( err => res.status(404).send("Error: " + err));
     }
 }
-// `The order is now "${status}"`
 const crud = { product , user , order} 
 
 module.exports = crud;

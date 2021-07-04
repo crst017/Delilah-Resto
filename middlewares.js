@@ -11,7 +11,6 @@ const verify = {
     },
     token : (err, req, res, next) => {
         if (err.name === 'UnauthorizedError') res.status(401).send('Auth token not found');
-        console.log("Estoy pasando")
     }
 }
 

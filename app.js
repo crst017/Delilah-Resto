@@ -35,6 +35,7 @@ app.get( '/users', verify.admin, crud.user.getAllUsers );
 app.get( '/order', crud.order.getLoggedUserOrders );
 app.post( '/order', crud.order.createOrder );
 app.put( '/order/:id', verify.admin, crud.order.updateOrderStatus )
+app.delete( '/order/:id', verify.admin, crud.order.deleteOrder );
 app.get( '/orders', verify.admin, crud.order.getOrders );
 
 

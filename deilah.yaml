@@ -273,6 +273,21 @@ paths:
                   example: confirmed
               required:
                 - status
+    delete:
+      summary: Cancel an order by id - Soft delete
+      tags:
+      - Orders
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Dish deleted successfully ! - Soft delete
+        '401':
+          $ref: '#/components/responses/401NotAuthorized'
+        '403':
+          $ref: '#/components/responses/403MissingToken'
+        '404':
+          description: The dish id does not exist
   /orders:
     get:
       summary: Get all orders
