@@ -20,6 +20,7 @@ app.use( verify.token ); //Handle the expressJwt error
 //3.1 definir constantes
 const PORT = process.env.APP_PORT ? process.env.APP_PORT : 3000;
 // 4. escribir rutas o endpoints
+app.get ( '/', () => console.log("Delilah Resto API"));
 app.get ( '/dishes', crud.product.getDishes );
 app.post( '/dishes', verify.admin, crud.product.createDish );
 app.get( '/dishes/:id', crud.product.getDish );
@@ -37,7 +38,9 @@ app.post( '/order', crud.order.createOrder );
 app.put( '/order/:id', verify.admin, crud.order.updateOrderStatus )
 app.delete( '/order/:id', verify.admin, crud.order.deleteOrder );
 app.get( '/orders', verify.admin, crud.order.getOrders );
-
+// TO DO 
+// contact/search
+// contact/all
 
 
 // //5. levantar el servidor
